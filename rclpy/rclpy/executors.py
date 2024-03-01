@@ -444,8 +444,9 @@ class Executor(ContextManager['Executor']):
                 if header is None:
                     return
 
-                response = await await_or_execute(srv.callback, request, srv.srv_type.Response())
-                srv.send_response(response, header)
+                response = await await_or_execute(srv.callback, request, header, srv.srv_type.Response())
+                if not isinstance(response, Future):
+                    srv.send_response(response, header)
             return _execute
         except InvalidHandle:
             # Service is a Destroyable, which means that on __enter__ it can throw an
